@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Anton } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+
+const anton = Anton({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-anton",
+});
 
 export const metadata: Metadata = {
   title: "EVENT HUB",
@@ -13,9 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={anton.variable}>
       <body className="bg-black text-white min-h-screen">
-        {}
         <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-black/80 backdrop-blur sticky top-0 z-50">
           <div className="text-xl font-extrabold text-lime-400">EVENT HUB</div>
 
@@ -41,7 +47,6 @@ export default function RootLayout({
           </nav>
         </header>
 
-        {}
         {children}
       </body>
     </html>
