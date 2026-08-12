@@ -119,5 +119,30 @@ const eventosAnteriores = [
 
 // --- PÁGINA PRINCIPAL ---
 export default function HomePage() {
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <main className="max-w-7xl mx-auto px-6 py-12 md:px-12"></main>
+      {/* HERO  */}
+      <section className="mb-20 pt-8d px-50">
+        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-lime-900/50 bg-[#141a0b] text-lime-400 text-xs font-semibold tracking-wide mb-2">
+          <span className="w-2 h-2 rounded-full bg-lime-400"></span>
+          Plataforma de Eventos
+        </div>
 
+        <h1 className="font-anton text-5xl md:text-8xl font-black tracking-wider uppercase leading-none mb-6">
+          Aprenda com
+          <br />
+          <span className="text-lime-400">Os Melhores</span>
+          <br />
+          Cursos
+        </h1>
+
+        <p className="text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed">
+          Workshops, cursos e palestras para profissionais de tecnologia.
+          <br />
+          Expanda seus conhecimentos e conecte-se com a comunidade.
+        </p>
+      </section>
+    </div>
+  );
 }
