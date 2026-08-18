@@ -28,6 +28,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { IconByron } from "./components/icon/IconByron";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,11 +38,11 @@ const parceiros = [
   { id: 2, icon: faGithub },
   { id: 3, icon: faReact },
   { id: 4, icon: faNodeJs },
-  { id: 5, icon: faAws },
+  { id: 6, icon: IconByron },
   { id: 6, icon: faFigma },
   { id: 7, icon: faSpotify },
   { id: 8, icon: faMicrosoft },
-  { id: 9, icon: "/5c819361a84bc84415218e263b4529afb0e13a2b.png" },
+  { id: 9, icon: faAws },
 ];
 
 const proximosEventos = [
@@ -280,13 +281,13 @@ export default function HomePage() {
     <div ref={container} className="min-h-screen bg-[#0a0a0a] text-white">
       <main className="max-w-7xl mx-auto px-6 py-12 md:px-12"></main>
       {/* HERO  */}
-      <section className="mb-20 pt-8d px-50">
+      <section className="mb-20 pt-8d px-5 md:px-48">
         <div className="hero-badge inline-flex items-center gap-2 px-5 py-2 rounded-full border border-lime-900/50 bg-[#141a0b] text-lime-400 text-xs font-semibold tracking-wide mb-2">
           <span className="w-2 h-2 rounded-full bg-lime-400"></span>
           Plataforma de Eventos
         </div>
 
-        <h1 className="hero-title font-anton text-5xl md:text-8xl font-black tracking-wider uppercase leading-none mb-6">
+        <h1 className="hero-title font-anton text-7xl md:text-8xl lg:text-9xl font-black tracking-wider uppercase leading-none mb-6">
           Aprenda com
           <br />
           <span className="text-lime-400 [text-shadow:_0_0_10px_rgba(163,230,53,0.2),_0_0_25px_rgba(163,230,53,0.2),_0_0_40px_rgba(163,230,53,0.2)] drop-shadow-[0_0_15px_rgba(163,230,53,0.2)]">
@@ -338,15 +339,8 @@ export default function HomePage() {
                 key={parceiro.id}
                 className="parceiro-card snap-center shrink-0 w-44 h-24 rounded-2xl bg-[#111111] border border-gray-800 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-300 transform select-none"
               >
-                {typeof parceiro.icon === "string" ? (
-                  <div className="relative w-8 h-8">
-                    <Image
-                      src={parceiro.icon}
-                      alt={`Parceiro ${parceiro.id}`}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
+                {typeof parceiro.icon === "function" ? (
+                  <parceiro.icon className="w-8 h-8 transition-colors duration-300 icon-glow" />
                 ) : (
                   <FontAwesomeIcon
                     icon={parceiro.icon as any}
