@@ -1,3 +1,6 @@
+import { todosEventos } from "../lib/dataEventos";
+import { participantes } from "../lib/dataParticipantes";
+
 export default function ParticipantesPage() {
   return (
     <main className="min-h-[calc(100vh-73px)] bg-[#080808] px-6 py-14 sm:px-10 lg:px-16">
@@ -9,7 +12,7 @@ export default function ParticipantesPage() {
             </h1>
 
             <p className="mt-2 text-base text-zinc-500">
-              7 participantes cadastrados
+              {participantes.length} participantes cadastrados
             </p>
           </div>
 
@@ -38,15 +41,38 @@ export default function ParticipantesPage() {
             </thead>
 
             <tbody>
-              <tr>
-                <td
-                  colSpan={6}
-                  className="px-5 py-10 text-center text-sm text-zinc-500"
-                >
-                  Os participantes cadastrados aparecerão aqui.
-                </td>
-              </tr>
-            </tbody>
+                      {participantes.map((participante) => (
+                        <tr
+                          key={participante.id}
+                          className="border-b border-white/5 last:border-b-0"
+                        >
+                          <td className="px-5 py-5 text-base font-bold text-white">
+                            {participante.nome}
+                          </td>
+
+                          <td className="px-5 py-5 text-base text-zinc-500">
+                            {participante.email}
+                          </td>
+
+                          <td className="px-5 py-5 text-base text-zinc-400">
+                            {participante.status}
+                          </td>
+
+                          <td className="px-5 py-5 text-base text-zinc-400">
+                            {participante.funcao}
+                          </td>
+
+                          <td className="px-5 py-5 text-base text-zinc-500">
+                            {participante.eventosInscritosIds.length}{" "}
+                            {participante.eventosInscritosIds.length === 1
+                              ? "evento"
+                              : "eventos"}
+                          </td>
+
+                          <td className="px-5 py-5 text-right text-zinc-600">—</td>
+                        </tr>
+                      ))}
+             </tbody>
           </table>
         </div>
       </section>
