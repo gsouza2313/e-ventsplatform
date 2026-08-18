@@ -29,7 +29,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { IconByron } from "./components/icon/IconByron";
-import { obterEventosAtualizados } from "./lib/eventosFilter";
+import { obterEventosAtualizados } from "./utils/eventosFilter";
 
 gsap.registerPlugin(ScrollTrigger);
 

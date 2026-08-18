@@ -1,5 +1,5 @@
-import { todosEventos as todosOsEventos } from "./dataEventos";
-import { participantes } from "./dataParticipantes";
+import { todosEventos as todosOsEventos } from "../lib/dataEventos";
+import { participantes } from "../lib/dataParticipantes";
 
 export function obterEventosAtualizados() {
     // Calculo de Vagas Disponíveis e Nome do Professor/Palestrante
