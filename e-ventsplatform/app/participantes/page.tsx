@@ -21,6 +21,34 @@ export default function ParticipantesPage() {
             Novo Participante
           </button>
         </div>
+
+         <div className="overflow-x-auto rounded-3xl border border-lime-400/20 bg-[#101010]">
+          <table className="min-w-[1080px] w-full border-collapse text-left">
+            <thead className="border-b border-lime-400/15">
+              <tr className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500">
+                <th className="px-5 py-5">Nome</th>
+                <th className="px-5 py-5">E-mail</th>
+                <th className="px-5 py-5">Status</th>
+                <th className="px-5 py-5">Função</th>
+                <th className="px-5 py-5">Eventos</th>
+                <th className="px-5 py-5">
+                  <span className="sr-only">Ações</span>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-5 py-10 text-center text-sm text-zinc-500"
+                >
+                  Os participantes cadastrados aparecerão aqui.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
     </main>
   );
