@@ -282,6 +282,8 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto px-6 py-12 md:px-12"></main>
       {/* HERO  */}
       <section className="mb-20 pt-8d px-5 md:px-48">
+        <div className="absolute top-[-10%] left-[-10%] lg:left-[-20%] w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-lime-500/20 rounded-full blur-[100px] pointer-events-none z-0" />
+        <div className="absolute top-[-35%] right-[-20%] w-[400px] h-[400px] lg:w-[1200px] lg:h-[600px] md:w-[800px] md:h-[600px] bg-lime-500/20 rounded-full blur-[100px] lg:blur-[200px] pointer-events-none z-0" />
         <div className="hero-badge inline-flex items-center gap-2 px-5 py-2 rounded-full border border-lime-900/50 bg-[#141a0b] text-lime-400 text-xs font-semibold tracking-wide mb-2">
           <span className="w-2 h-2 rounded-full bg-lime-400"></span>
           Plataforma de Eventos
