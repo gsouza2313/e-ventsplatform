@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,6 +9,8 @@ import {
   faUsers,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 // --- DADOS MOCKADOS ---
 const parceiros = [
@@ -142,6 +146,109 @@ export default function HomePage() {
           <br />
           Expanda seus conhecimentos e conecte-se com a comunidade.
         </p>
+      </section>
+      {/* PRÓXIMOS EVENTOS */}
+      <section className="mb-24">
+        <div className="mb-8 px-8 flex justify-between items-end">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight">
+              Próximos Eventos
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              {proximosEventos.length} eventos programados
+            </p>
+          </div>
+          <div className="w-10 h-1 bg-lime-400 rounded-full hidden md:block"></div>
+        </div>
+
+        <div className="px-8">
+          <Swiper
+            spaceBetween={20}
+            slidesPerView={1.1} // mostra 1 card e um pedaço do próximo no mobile
+            grabCursor={true}
+            breakpoints={{
+              // mobile first
+              640: {
+                slidesPerView: 2.1,
+              },
+              768: {
+                slidesPerView: 3,
+              },
+              1024: {
+                slidesPerView: 4,
+              },
+            }}
+            className="pb-8"
+          >
+            {proximosEventos.map((evento) => (
+              <SwiperSlide key={evento.id} className="h-auto">
+                <article className="bg-[#111111] border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col hover:border-gray-700 transition-colors h-full">
+                  <div className="h-40 w-full relative bg-gray-900">
+                    <Image
+                      src={evento.imagem}
+                      alt={evento.titulo}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+
+                  <div className="p-5 flex flex-col flex-grow">
+                    <h3 className="text-lg font-bold leading-tight mb-3">
+                      {evento.titulo}
+                    </h3>
+
+                    <div className="flex items-center gap-3 text-xs text-gray-400 mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <FontAwesomeIcon
+                          icon={faCalendar}
+                          className="text-lime-500 w-3.5 h-3.5"
+                        />{" "}
+                        {evento.data}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <FontAwesomeIcon
+                          icon={faClock}
+                          className="text-lime-500 w-3.5 h-3.5"
+                        />{" "}
+                        {evento.hora}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
+                      <FontAwesomeIcon
+                        icon={faMapMarkerAlt}
+                        className="w-3.5 h-3.5"
+                      />{" "}
+                      {evento.local}
+                    </div>
+
+                    <p className="text-xs text-gray-400 line-clamp-3 mb-6 flex-grow leading-relaxed">
+                      {evento.descricao}
+                    </p>
+
+                    <div className="flex justify-between items-center text-xs mt-auto pt-4 border-t border-gray-800/50">
+                      <div className="flex items-center gap-1.5 text-lime-400 font-bold">
+                        <FontAwesomeIcon
+                          icon={faUsers}
+                          className="w-3.5 h-3.5"
+                        />{" "}
+                        {evento.vagas} vagas
+                      </div>
+                      <div className="flex items-center gap-1.5 text-gray-500">
+                        <FontAwesomeIcon
+                          icon={faUser}
+                          className="w-3.5 h-3.5"
+                        />{" "}
+                        {evento.autor}
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       </section>
     </div>
   );
