@@ -29,7 +29,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { IconByron } from "./components/icon/IconByron";
-import { eventosAnteriores, proximosEventos } from "./lib/data";
+import { obterEventosAtualizados } from "./lib/eventosFilter";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -48,6 +48,11 @@ const parceiros = [
 
 // --- PÁGINA PRINCIPAL ---
 export default function HomePage() {
+  // Calculo de vagas disponiveis e separação de próximos e anteriores
+  const eventosAtualizados = obterEventosAtualizados();
+  const proximosEventos = eventosAtualizados.proximos;
+  const eventosAnteriores = eventosAtualizados.anteriores;
+
   const container = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -332,14 +337,14 @@ export default function HomePage() {
                           icon={faUsers}
                           className="w-3.5 h-3.5"
                         />{" "}
-                        {evento.vagas} vagas
+                        {evento.vagasDisponiveis} vagas
                       </div>
                       <div className="flex items-center gap-1.5 text-gray-500">
                         <FontAwesomeIcon
                           icon={faUser}
                           className="w-3.5 h-3.5"
                         />{" "}
-                        {evento.autor}
+                        {evento.nomeProfessor}
                       </div>
                     </div>
                   </div>
@@ -437,14 +442,14 @@ export default function HomePage() {
                           icon={faUsers}
                           className="w-3.5 h-3.5"
                         />{" "}
-                        {evento.vagas} vagas
+                        {evento.vagasDisponiveis} vagas
                       </div>
                       <div className="flex items-center gap-1.5 text-gray-500">
                         <FontAwesomeIcon
                           icon={faUser}
                           className="w-3.5 h-3.5"
                         />{" "}
-                        {evento.autor}
+                        {evento.nomeProfessor}
                       </div>
                     </div>
                   </div>
