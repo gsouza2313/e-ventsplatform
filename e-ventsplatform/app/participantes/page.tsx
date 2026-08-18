@@ -62,12 +62,24 @@ export default function ParticipantesPage() {
                             {participante.funcao}
                           </td>
 
-                          <td className="px-5 py-5 text-base text-zinc-500">
-                            {participante.eventosInscritosIds.length}{" "}
-                            {participante.eventosInscritosIds.length === 1
-                              ? "evento"
-                              : "eventos"}
-                          </td>
+                          <td className="px-5 py-5">
+                                <div className="flex max-w-[310px] gap-2 overflow-hidden">
+                                  {participante.eventosInscritosIds.map((eventoId) => {
+                                    const evento = todosEventos.find((item) => item.id === eventoId);
+
+                                    if (!evento) return null;
+
+                                    return (
+                                      <span
+                                        key={evento.id}
+                                        className="shrink-0 truncate rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1 text-sm text-zinc-500"
+                                      >
+                                        {evento.titulo}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                            </td>
 
                           <td className="px-5 py-5 text-right text-zinc-600">—</td>
                         </tr>
