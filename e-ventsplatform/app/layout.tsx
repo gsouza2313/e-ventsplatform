@@ -22,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={anton.variable}>
-      <body className="bg-black text-white min-h-screen">
+      <body className="bg-black text-white min-h-screen overflow-x-hidden">
         <SmoothScroll>
           <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-black/80 backdrop-blur sticky top-0 z-50">
             <div className="text-xl font-extrabold text-lime-400">
