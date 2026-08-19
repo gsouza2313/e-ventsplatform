@@ -4,8 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { obterEventosAtualizados } from "../utils/eventosFilter"; 
 import { Trash2, Pencil, Plus } from "lucide-react";
+import { ModalNovoEvento } from "../components/ModalNovoEvento";
+import { useState } from "react";
 
 export default function EventosPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { proximos, anteriores } = obterEventosAtualizados();
   const listaEventos = [
     ...proximos.map(e => ({ ...e, encerrado: false })),
@@ -26,8 +30,11 @@ export default function EventosPage() {
               {listaEventos.length} eventos cadastrados
             </p>
           </div>
-          <button className="bg-lime-400 hover:bg-lime-300 text-black font-bold py-2.5 px-6 rounded-xl transition-colors flex items-center gap-2 text-sm">
-            <Plus size={16} /><p>Novo Evento</p>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-lime-400 hover:bg-lime-500 text-black font-bold py-2.5 px-6 rounded-lg transition-colors flex items-center gap-2 text-sm"
+          >
+            <span>+</span> Novo Evento
           </button>
         </header>
 
@@ -112,6 +119,11 @@ export default function EventosPage() {
             </tbody>
           </table>
         </div>
+
+        <ModalNovoEvento 
+          isOpen={isModalOpen} 
+          onOpenChange={setIsModalOpen} 
+        />
 
       </div>
     </div>
