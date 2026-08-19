@@ -1,93 +1,119 @@
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { todosEventos } from "../lib/dataEventos";
 import { participantes } from "../lib/dataParticipantes";
 
 export default function ParticipantesPage() {
   return (
-    <main className="min-h-[calc(100vh-73px)] bg-[#080808] px-6 py-14 sm:px-10 lg:px-16">
-      <section className="mx-auto max-w-[1540px]">
-        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+    <div className="min-h-screen bg-[#0a0a0a] p-8 font-sans text-white md:p-12">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
-            <h1 className="font-anton text-4xl uppercase leading-none tracking-wide text-white sm:text-5xl">
+            <h1 className="mb-1 text-2xl font-black uppercase tracking-tight md:text-3xl">
               Gestão de Participantes
             </h1>
 
-            <p className="mt-2 text-base text-zinc-500">
+            <p className="text-sm text-gray-500">
               {participantes.length} participantes cadastrados
             </p>
           </div>
 
           <button
             type="button"
-            className="inline-flex items-center justify-center gap-3 rounded-2xl bg-lime-400 px-6 py-4 text-base font-bold text-black transition-colors hover:bg-lime-300"
+            className="flex items-center gap-2 rounded-xl bg-lime-400 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
           >
-            <span className="text-2xl font-normal leading-none">+</span>
+            <Plus size={16} />
             Novo Participante
           </button>
-        </div>
+        </header>
 
-         <div className="overflow-x-auto rounded-3xl border border-lime-400/20 bg-[#101010]">
-          <table className="min-w-[1080px] w-full border-collapse text-left">
-            <thead className="border-b border-lime-400/15">
-              <tr className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500">
-                <th className="px-5 py-5">Nome</th>
-                <th className="px-5 py-5">E-mail</th>
-                <th className="px-5 py-5">Status</th>
-                <th className="px-5 py-5">Função</th>
-                <th className="px-5 py-5">Eventos</th>
-                <th className="px-5 py-5">
+        <div className="overflow-x-auto rounded-2xl border border-gray-800/60 bg-[#111111]">
+          <table className="w-full min-w-[900px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-gray-800/60 text-xs font-extrabold uppercase tracking-wider text-gray-600">
+                <th className="px-6 py-4 font-medium">Nome</th>
+                <th className="px-6 py-4 font-medium">E-mail</th>
+                <th className="px-6 py-4 font-medium">Status</th>
+                <th className="px-6 py-4 font-medium">Função</th>
+                <th className="px-6 py-4 font-medium">Eventos</th>
+                <th className="px-6 py-4 text-right font-medium">
                   <span className="sr-only">Ações</span>
                 </th>
               </tr>
             </thead>
 
-            <tbody>
-                      {participantes.map((participante) => (
-                        <tr
-                          key={participante.id}
-                          className="border-b border-white/5 last:border-b-0"
-                        >
-                          <td className="px-5 py-5 text-base font-bold text-white">
-                            {participante.nome}
-                          </td>
+            <tbody className="text-sm text-gray-300">
+              {participantes.map((participante, index) => (
+                <tr
+                  key={participante.id}
+                  className={`border-b border-gray-800/40 transition-colors hover:bg-white/[0.02] ${
+                    index === participantes.length - 1 ? "border-b-0" : ""
+                  }`}
+                >
+                  <td className="px-6 py-4">
+                    <p className="max-w-[190px] truncate font-bold text-white">
+                      {participante.nome}
+                    </p>
+                  </td>
 
-                          <td className="px-5 py-5 text-base text-zinc-500">
-                            {participante.email}
-                          </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {participante.email}
+                  </td>
 
-                          <td className="px-5 py-5 text-base text-zinc-400">
-                            {participante.status}
-                          </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {participante.status}
+                  </td>
 
-                          <td className="px-5 py-5 text-base text-zinc-400">
-                            {participante.funcao}
-                          </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {participante.funcao}
+                  </td>
 
-                          <td className="px-5 py-5">
-                                <div className="flex max-w-[310px] gap-2 overflow-hidden">
-                                  {participante.eventosInscritosIds.map((eventoId) => {
-                                    const evento = todosEventos.find((item) => item.id === eventoId);
+                  <td className="px-6 py-4">
+                    <div className="flex max-w-[270px] gap-2 overflow-hidden">
+                      {participante.eventosInscritosIds.map((eventoId) => {
+                        const evento = todosEventos.find(
+                          (item) => item.id === eventoId,
+                        );
 
-                                    if (!evento) return null;
+                        if (!evento) return null;
 
-                                    return (
-                                      <span
-                                        key={evento.id}
-                                        className="shrink-0 truncate rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1 text-sm text-zinc-500"
-                                      >
-                                        {evento.titulo}
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                            </td>
+                        return (
+                          <span
+                            key={evento.id}
+                            title={evento.titulo}
+                            className="shrink-0 truncate rounded-md border border-gray-800/80 bg-white/[0.03] px-2.5 py-1 text-xs text-gray-500"
+                          >
+                            {evento.titulo}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </td>
 
-                          <td className="px-5 py-5 text-right text-zinc-600">—</td>
-                        </tr>
-                      ))}
-             </tbody>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-4 text-gray-600">
+                      <button
+                        type="button"
+                        title={`Editar ${participante.nome}`}
+                        className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-lime-400"
+                      >
+                        <Pencil size={16} />
+                      </button>
+
+                      <button
+                        type="button"
+                        title={`Excluir ${participante.nome}`}
+                        className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
