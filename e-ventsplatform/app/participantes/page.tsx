@@ -2,6 +2,17 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { todosEventos } from "../lib/dataEventos";
 import { participantes } from "../lib/dataParticipantes";
 
+const estilosStatus: Record<string, string> = {
+  Confirmada: "border-lime-400/30 bg-lime-400/10 text-lime-400",
+  Pendente: "border-amber-400/30 bg-amber-400/10 text-amber-400",
+};
+
+const estilosFuncao: Record<string, string> = {
+  Participante: "border-gray-700 bg-gray-800/50 text-gray-400",
+  Professor: "border-blue-400/30 bg-blue-400/10 text-blue-400",
+  Palestrante: "border-purple-400/30 bg-purple-400/10 text-purple-400",
+};
+
 export default function ParticipantesPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] p-8 font-sans text-white md:p-12">
@@ -59,12 +70,24 @@ export default function ParticipantesPage() {
                     {participante.email}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-400">
-                    {participante.status}
-                  </td>
+                  <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
+                              estilosStatus[participante.status]
+                            }`}
+                          >
+                            {participante.status}
+                          </span>
+                    </td> 
 
-                  <td className="px-6 py-4 text-gray-400">
-                    {participante.funcao}
+                  <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex rounded-full border px-3 py-1 text-xs ${
+                            estilosFuncao[participante.funcao]
+                          }`}
+                        >
+                          {participante.funcao}
+                        </span>
                   </td>
 
                   <td className="px-6 py-4">
