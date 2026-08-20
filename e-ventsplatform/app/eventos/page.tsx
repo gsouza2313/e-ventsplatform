@@ -1,20 +1,66 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { obterEventosAtualizados } from "../utils/eventosFilter";
+import {
+  obterEventosAtualizados,
+  isEventoEncerrado,
+  obterVagasDisponiveis,
+} from "../utils/eventosFilter";
 import { Trash2, Pencil, Plus } from "lucide-react";
-import { ModalNovoEvento } from "../components/ModalNovoEvento";
+import {
+  ModalNovoEvento,
+  type NovoEventoData,
+} from "../components/ModalNovoEvento";
 import { useState } from "react";
+
+export interface EventoTabela {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  imagem?: string;
+  data: string;
+  hora: string;
+  local: string;
+  vagasTotais: number;
+  vagasDisponiveis: number;
+  nomeProfessor: string;
+  encerrado: boolean;
+}
 
 export default function EventosPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { proximos, anteriores } = obterEventosAtualizados();
-  const listaEventos = [
+  const eventosIniciais: EventoTabela[] = [
     ...proximos.map((e) => ({ ...e, encerrado: false })),
     ...anteriores.map((e) => ({ ...e, encerrado: true })),
   ];
+
+  const [listaEventos, setListaEventos] =
+    useState<EventoTabela[]>(eventosIniciais);
+
+  const proximoId =
+    listaEventos.length > 0
+      ? Math.max(...listaEventos.map((e) => e.id)) + 1
+      : 1;
+
+  function handleCriarEvento(dadosDoForm: NovoEventoData) {
+    const novoEvento: EventoTabela = {
+      id: dadosDoForm.id,
+      titulo: dadosDoForm.titulo,
+      descricao: dadosDoForm.descricao,
+      imagem: dadosDoForm.imagem,
+      data: dadosDoForm.data,
+      hora: dadosDoForm.hora,
+      local: dadosDoForm.local || "não cadastrado",
+      vagasTotais: dadosDoForm.vagasTotais,
+      vagasDisponiveis: dadosDoForm.vagasTotais,
+      nomeProfessor: dadosDoForm.nomeProfessor || "não cadastrado",
+      encerrado: isEventoEncerrado(dadosDoForm.data),
+    };
+
+    setListaEventos((atual) => [novoEvento, ...atual]);
+    setIsModalOpen(false);
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-8 md:p-12 font-sans">
@@ -133,7 +179,12 @@ export default function EventosPage() {
           </table>
         </div>
 
-        <ModalNovoEvento isOpen={isModalOpen} onOpenChange={setIsModalOpen} />
+        <ModalNovoEvento
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          onCriar={handleCriarEvento}
+          proximoId={proximoId}
+        />
       </div>
     </div>
   );

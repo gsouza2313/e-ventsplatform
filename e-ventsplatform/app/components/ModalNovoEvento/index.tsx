@@ -1,3 +1,5 @@
+import { todosEventos } from "@/app/lib/dataEventos";
+import { obterVagasDisponiveis } from "@/app/utils/eventosFilter";
 import {
   Dialog,
   DialogContent,
@@ -5,19 +7,53 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import ReactLenis, { useLenis } from "lenis/react";
+
+export interface NovoEventoData {
+  id: number;
+  titulo: string;
+  descricao: string;
+  imagem?: string;
+  data: string;
+  hora: string;
+  local?: string;
+  vagasTotais: number;
+  nomeProfessor?: string;
+}
 
 interface ModalNovoEventoProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onCriar: (dados: NovoEventoData) => void;
+  proximoId: number;
 }
+
+function formatarDataParaBR(dataISO: string): string {
+  const [ano, mes, dia] = dataISO.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+const CAMPOS_INICIAIS = {
+  titulo: "",
+  imagem: "",
+  descricao: "",
+  data: "",
+  hora: "",
+  local: "",
+  vagasTotais: "",
+  nomeProfessor: "",
+};
 
 export function ModalNovoEvento({
   isOpen,
   onOpenChange,
+  onCriar,
+  proximoId,
 }: ModalNovoEventoProps) {
   const lenis = useLenis();
+  const [campos, setCampos] = useState(CAMPOS_INICIAIS);
+  const [tempId, setTempId] = useState<number>(0);
 
   // Fix do scroll no fundo
   useEffect(() => {
@@ -33,6 +69,41 @@ export function ModalNovoEvento({
       lenis.start();
     };
   }, [isOpen, lenis]);
+
+  // Reset do modal
+  useEffect(() => {
+    if (!isOpen) {
+      setTempId(proximoId);
+      setCampos(CAMPOS_INICIAIS);
+    }
+  }, [isOpen]);
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) {
+    const { name, value } = e.target;
+    setCampos((atual) => ({ ...atual, [name]: value }));
+  }
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    onCriar({
+      id: tempId,
+      titulo: campos.titulo,
+      descricao: campos.descricao,
+      imagem: campos.imagem || undefined,
+      data: formatarDataParaBR(campos.data),
+      hora: campos.hora,
+      local: campos.local || undefined,
+      vagasTotais: Number(campos.vagasTotais),
+      nomeProfessor: campos.nomeProfessor || undefined,
+    });
+  }
+
+  const vagasDisponiveis =
+    obterVagasDisponiveis(tempId) || campos.vagasTotais || "-";
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="bg-[#111111] border-gray-800 text-white w-full sm:max-w-xl p-0 shadow-2xl max-h-[90dvh] overflow-hidden">
@@ -47,7 +118,7 @@ export function ModalNovoEvento({
             </DialogTitle>
           </DialogHeader>
 
-          <form className="space-y-5 mb-6">
+          <form onSubmit={handleSubmit} className="space-y-5 mb-6">
             {/* NOME DO EVENTO */}
             <div>
               <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-6">
@@ -55,6 +126,10 @@ export function ModalNovoEvento({
               </label>
               <input
                 type="text"
+                name="titulo"
+                value={campos.titulo}
+                onChange={handleChange}
+                required
                 placeholder="Título do curso ou workshop"
                 className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-lime-400 transition-colors"
               />
@@ -69,6 +144,9 @@ export function ModalNovoEvento({
               </label>
               <input
                 type="text"
+                name="imagem"
+                value={campos.imagem}
+                onChange={handleChange}
                 placeholder="https://"
                 className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-lime-400 transition-colors"
               />
@@ -80,6 +158,10 @@ export function ModalNovoEvento({
                 Descrição <span className="text-lime-400">*</span>
               </label>
               <textarea
+                name="descricao"
+                value={campos.descricao}
+                onChange={handleChange}
+                required
                 placeholder="Descreva o conteúdo do evento"
                 rows={3}
                 className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-lime-400 transition-colors resize-none"
@@ -94,6 +176,10 @@ export function ModalNovoEvento({
                 </label>
                 <input
                   type="date"
+                  name="data"
+                  value={campos.data}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-lime-400 transition-colors"
                   style={{ colorScheme: "dark" }}
                 />
@@ -104,6 +190,10 @@ export function ModalNovoEvento({
                 </label>
                 <input
                   type="time"
+                  name="hora"
+                  value={campos.hora}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-lime-400 transition-colors"
                   style={{ colorScheme: "dark" }}
                 />
@@ -120,6 +210,9 @@ export function ModalNovoEvento({
               </label>
               <input
                 type="text"
+                name="local"
+                value={campos.local}
+                onChange={handleChange}
                 placeholder="Endereço físico do evento"
                 className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-lime-400 transition-colors"
               />
@@ -133,6 +226,10 @@ export function ModalNovoEvento({
                 </label>
                 <input
                   type="number"
+                  name="vagasTotais"
+                  value={campos.vagasTotais}
+                  onChange={handleChange}
+                  required
                   placeholder="0"
                   min="1"
                   className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-lime-400 transition-colors"
@@ -144,7 +241,7 @@ export function ModalNovoEvento({
                 </label>
                 <input
                   type="text"
-                  value="-"
+                  value={campos.vagasTotais ? vagasDisponiveis : "-"}
                   disabled
                   className="w-full bg-[#1a1a1a]/50 border border-gray-800/50 rounded-xl px-4 py-3 text-sm text-lime-400 font-bold focus:outline-none cursor-not-allowed"
                 />
@@ -161,6 +258,9 @@ export function ModalNovoEvento({
               </label>
               <input
                 type="text"
+                name="nomeProfessor"
+                value={campos.nomeProfessor}
+                onChange={handleChange}
                 placeholder="Responsável ou palestrante"
                 className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-lime-400 transition-colors"
               />
