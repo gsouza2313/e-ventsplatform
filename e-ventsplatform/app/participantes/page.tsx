@@ -275,6 +275,22 @@ export default function ParticipantesPage() {
                       ))}
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-4 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => setModalAberto(false)}
+                              className="rounded-xl border border-gray-800 px-4 py-3 text-sm font-semibold text-gray-400 transition-colors hover:border-gray-700 hover:bg-gray-800 hover:text-white"
+                            >
+                              Cancelar
+                            </button>
+
+                            <button
+                              type="button"
+                              className="rounded-xl bg-lime-400 px-4 py-3 text-sm font-bold text-black transition-colors hover:bg-lime-300"
+                            >
+                              Cadastrar
+                            </button>
+                          </div>
               </form>
     </div>
   </div>
