@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Anton } from "next/font/google";
+import { Anton, Geist } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 
 
