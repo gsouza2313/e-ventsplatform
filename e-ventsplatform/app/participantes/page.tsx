@@ -1,6 +1,9 @@
-import { Pencil, Plus, Trash2 } from "lucide-react";
+"use client";
+
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { todosEventos } from "../lib/dataEventos";
 import { participantes } from "../lib/dataParticipantes";
+import { useState } from "react";
 
 const estilosStatus: Record<string, string> = {
   Confirmada: "border-lime-400/30 bg-lime-400/10 text-lime-400",
@@ -13,7 +16,10 @@ const estilosFuncao: Record<string, string> = {
   Palestrante: "border-purple-400/30 bg-purple-400/10 text-purple-400",
 };
 
+
+
 export default function ParticipantesPage() {
+  const [modalAberto, setModalAberto] = useState(false);
   return (
     <div className="min-h-screen bg-[#0a0a0a] p-8 font-sans text-white md:p-12">
       <div className="mx-auto max-w-7xl">
@@ -29,12 +35,13 @@ export default function ParticipantesPage() {
           </div>
 
           <button
-            type="button"
-            className="flex items-center gap-2 rounded-xl bg-lime-400 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
-          >
-            <Plus size={16} />
-            Novo Participante
-          </button>
+              type="button"
+              onClick={() => setModalAberto(true)}
+              className="flex items-center gap-2 rounded-xl bg-lime-400 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
+            >
+              <Plus size={16} />
+              Novo Participante
+            </button>
         </header>
 
         <div className="overflow-x-auto rounded-2xl border border-gray-800/60 bg-[#111111]">
@@ -137,6 +144,40 @@ export default function ParticipantesPage() {
           </table>
         </div>
       </div>
+      {modalAberto && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-modal-participante"
+  >
+    <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-lime-400/20 bg-[#111111] shadow-2xl">
+      <div className="flex items-center justify-between border-b border-gray-800/60 px-6 py-5">
+        <h2
+          id="titulo-modal-participante"
+          className="text-xl font-black uppercase"
+        >
+          Novo Participante
+        </h2>
+
+        <button
+          type="button"
+          onClick={() => setModalAberto(false)}
+          className="rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-800 hover:text-white"
+          aria-label="Fechar modal"
+        >
+          <X size={22} />
+        </button>
+      </div>
+
+      <div className="p-6">
+        <p className="text-sm text-gray-500">
+          Preencha os dados para cadastrar um novo participante.
+        </p>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
