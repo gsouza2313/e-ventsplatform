@@ -1,8 +1,605 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { todosEventos } from "../lib/dataEventos";
+import { participantes as participantesIniciais } from "../lib/dataParticipantes";
+
+type Participante = (typeof participantesIniciais)[number];
+
+const estilosStatus: Record<string, string> = {
+  Confirmada: "border-lime-400/30 bg-lime-400/10 text-lime-400",
+  Pendente: "border-amber-400/30 bg-amber-400/10 text-amber-400",
+};
+
+const estilosFuncao: Record<string, string> = {
+  Participante: "border-gray-700 bg-gray-800/50 text-gray-400",
+  Professor: "border-blue-400/30 bg-blue-400/10 text-blue-400",
+  Palestrante: "border-purple-400/30 bg-purple-400/10 text-purple-400",
+};
+
 export default function ParticipantesPage() {
-  return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold text-white">Gestão de Participantes</h1>
-      <p className="mt-2 text-gray-300">Lista de inscritos e presença.</p>
-    </main>
+  const [modalAberto, setModalAberto] = useState(false);
+  const [listaParticipantes, setListaParticipantes] =
+    useState(participantesIniciais);
+  const [participanteEmEdicao, setParticipanteEmEdicao] =
+    useState<Participante | null>(null);
+
+    const [participanteParaExcluir, setParticipanteParaExcluir] =
+  useState<Participante | null>(null);
+
+  function fecharModal() {
+    setModalAberto(false);
+    setParticipanteEmEdicao(null);
+  }
+
+  function abrirNovoParticipante() {
+    setParticipanteEmEdicao(null);
+    setModalAberto(true);
+  }
+
+  function abrirEdicao(participante: Participante) {
+    setParticipanteEmEdicao(participante);
+    setModalAberto(true);
+  }
+
+ 
+
+function abrirConfirmacaoExclusao(participante: Participante) {
+  setParticipanteParaExcluir(participante);
+}
+
+function removerParticipante() {
+  if (!participanteParaExcluir) return;
+
+  setListaParticipantes((participantesAtuais) =>
+    participantesAtuais.filter(
+      (participante) =>
+        participante.id !== participanteParaExcluir.id,
+    ),
+  );
+
+  setParticipanteParaExcluir(null);
+}
+
+
+
+  function salvarParticipante(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formulario = event.currentTarget;
+    const dados = new FormData(formulario);
+
+    const dadosDoParticipante = {
+      nome: String(dados.get("nome")).trim(),
+      email: String(dados.get("email")).trim(),
+      status: String(dados.get("status")),
+      funcao: String(dados.get("funcao")),
+      eventosInscritosIds: dados.getAll("eventos").map(Number),
+    };
+
+    if (participanteEmEdicao) {
+      setListaParticipantes((participantesAtuais) =>
+        participantesAtuais.map((participante) =>
+          participante.id === participanteEmEdicao.id
+            ? { id: participante.id, ...dadosDoParticipante }
+            : participante,
+        ),
+      );
+    } else {
+      const proximoId =
+        Math.max(
+          0,
+          ...listaParticipantes.map((participante) => participante.id),
+        ) + 1;
+
+      setListaParticipantes((participantesAtuais) => [
+        ...participantesAtuais,
+        { id: proximoId, ...dadosDoParticipante },
+      ]);
+    }
+
+    formulario.reset();
+    fecharModal();
+  }
+
+    useEffect(() => {
+      if (modalAberto) {
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+      }
+
+      return () => {
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+      };
+    }, [modalAberto]);
+
+ return (
+  
+ <div className="min-h-screen w-full bg-[#0a0a0a] p-4 sm:p-6 md:p-12">
+   <div className="mx-auto w-full max-w-7xl">
+        <header className="mb-8 flex flex-col items-stretch justify-between gap-4 sm:mb-10 md:flex-row md:items-center">
+          <div>
+            <h1 className="mb-1 text-2xl font-black uppercase tracking-tight md:text-3xl">
+              Gestão de Participantes
+            </h1>
+
+            <p className="text-sm text-gray-500">
+              {listaParticipantes.length} participantes cadastrados
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={abrirNovoParticipante}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-lime-400 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300 md:w-auto"
+          >
+            <Plus size={16} />
+            Novo Participante
+          </button>
+        </header>
+
+        <div className="space-y-3 md:hidden">
+  {listaParticipantes.map((participante) => (
+    <div
+      key={participante.id}
+      className="rounded-2xl border border-gray-800/60 bg-[#111111] p-4"
+    >
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate font-bold text-white">
+            {participante.nome}
+          </p>
+
+          <p className="mt-1 truncate text-sm text-gray-400">
+            {participante.email}
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1 text-gray-600">
+          <button
+            type="button"
+            onClick={() => abrirEdicao(participante)}
+            title={`Editar ${participante.nome}`}
+            className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-lime-400"
+          >
+            <Pencil size={16} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => abrirConfirmacaoExclusao(participante)}
+            title={`Excluir ${participante.nome}`}
+            className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <span
+          className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
+            estilosStatus[participante.status]
+          }`}
+        >
+          {participante.status}
+        </span>
+
+        <span
+          className={`inline-flex rounded-full border px-3 py-1 text-xs ${
+            estilosFuncao[participante.funcao]
+          }`}
+        >
+          {participante.funcao}
+        </span>
+      </div>
+
+      <div className="mt-3 border-t border-gray-800/60 pt-3">
+        <p className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-600">
+          Eventos
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          {participante.eventosInscritosIds.map((eventoId) => {
+            const evento = todosEventos.find(
+              (item) => item.id === eventoId
+            );
+
+            if (!evento) return null;
+
+            return (
+              <span
+                key={evento.id}
+                title={evento.titulo}
+                className="truncate rounded-md border border-gray-800/80 bg-white/[0.03] px-2.5 py-1 text-xs text-gray-500"
+              >
+                {evento.titulo}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+       <div className="w-full overflow-x-auto rounded-2xl border border-gray-800/60 bg-[#111111]">
+  <table className="w-full min-w-[700px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-gray-800/60 text-xs font-extrabold uppercase tracking-wider text-gray-600">
+                <th className="px-6 py-4 font-medium">Nome</th>
+                <th className="px-6 py-4 font-medium">E-mail</th>
+                <th className="px-6 py-4 font-medium">Status</th>
+                <th className="px-6 py-4 font-medium">Função</th>
+                <th className="px-6 py-4 font-medium">Eventos</th>
+                <th className="px-6 py-4 text-right font-medium">
+                  <span className="sr-only">Ações</span>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="text-sm text-gray-300">
+  {listaParticipantes.length > 0 ? (
+    listaParticipantes.map((participante, index) => (
+      <tr
+        key={participante.id}
+        className={`border-b border-gray-800/40 transition-colors hover:bg-white/[0.02] ${
+          index === listaParticipantes.length - 1 ? "border-b-0" : ""
+        }`}
+      >
+        <td className="px-6 py-4">
+          <p className="max-w-[190px] truncate font-bold text-white">
+            {participante.nome}
+          </p>
+        </td>
+
+        <td className="px-6 py-4 text-gray-400">
+          {participante.email}
+        </td>
+
+        <td className="px-6 py-4">
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
+              estilosStatus[participante.status]
+            }`}
+          >
+            {participante.status}
+          </span>
+        </td>
+
+        <td className="px-6 py-4">
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs ${
+              estilosFuncao[participante.funcao]
+            }`}
+          >
+            {participante.funcao}
+          </span>
+        </td>
+
+        <td className="px-6 py-4">
+          <div className="flex max-w-[270px] gap-2 overflow-hidden">
+            {participante.eventosInscritosIds.map((eventoId) => {
+              const evento = todosEventos.find(
+                (item) => item.id === eventoId
+              );
+
+              if (!evento) return null;
+
+              return (
+                <span
+                  key={evento.id}
+                  title={evento.titulo}
+                  className="shrink-0 truncate rounded-md border border-gray-800/80 bg-white/[0.03] px-2.5 py-1 text-xs text-gray-500"
+                >
+                  {evento.titulo}
+                </span>
+              );
+            })}
+          </div>
+        </td>
+
+        <td className="px-6 py-4 text-right">
+          <div className="flex items-center justify-end gap-4 text-gray-600">
+            <button
+              type="button"
+              onClick={() => abrirEdicao(participante)}
+              title={`Editar ${participante.nome}`}
+              className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-lime-400"
+            >
+              <Pencil size={16} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => abrirConfirmacaoExclusao(participante)}
+              title={`Excluir ${participante.nome}`}
+              className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={6} className="px-6 py-16 text-center">
+        <div className="flex flex-col items-center justify-center">
+          <p className="text-lg font-bold text-white">
+            Nenhum participante cadastrado
+          </p>
+
+          <p className="mt-2 text-sm text-gray-500">
+            Cadastre um novo participante para começar.
+          </p>
+
+          <button
+            type="button"
+            onClick={abrirNovoParticipante}
+            className="mt-5 rounded-xl bg-lime-400 px-5 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
+          >
+            <Plus size={16} className="mr-2 inline" />
+            Novo Participante
+          </button>
+        </div>
+      </td>
+    </tr>
+  )}
+</tbody>
+          </table>
+        </div>
+      </div>
+
+     {modalAberto && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/70 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+                    className="w-full max-w-lg max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl border border-lime-400/20 bg-[#111111] shadow-2xl"
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                  >
+           
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-lime-500/20 bg-[#111111] px-4 py-4 sm:px-6 sm:py-5">
+              <h2
+                id="titulo-modal-participante"
+                className="text-xl font-black uppercase tracking-wide text-white"
+              >
+                {participanteEmEdicao
+                  ? "Editar Participante"
+                  : "Novo Participante"}
+              </h2>
+
+              <button
+                type="button"
+                onClick={fecharModal}
+                className="rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                aria-label="Fechar modal"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            <form
+              key={participanteEmEdicao?.id ?? "novo"}
+              className="space-y-4 p-4 sm:p-6"
+              onSubmit={salvarParticipante}
+            >
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
+                >
+                  E-mail *
+                </label>
+
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  defaultValue={participanteEmEdicao?.email ?? ""}
+                  placeholder="email@exemplo.com"
+                  autoComplete="email"
+                  className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 transition-colors focus:border-lime-400"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="nome"
+                  className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
+                >
+                  Nome *
+                </label>
+
+                <input
+                  id="nome"
+                  name="nome"
+                  type="text"
+                  required
+                  defaultValue={participanteEmEdicao?.nome ?? ""}
+                  placeholder="Nome completo"
+                  autoComplete="name"
+                  className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 transition-colors focus:border-lime-400"
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="status"
+                    className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
+                  >
+                    Status de inscrição *
+                  </label>
+
+                  <select
+                    id="status"
+                    name="status"
+                    defaultValue={participanteEmEdicao?.status ?? "Pendente"}
+                    className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-lime-400"
+                  >
+                    <option value="Pendente">Pendente</option>
+                    <option value="Confirmada">Confirmada</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="funcao"
+                    className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
+                  >
+                    Função *
+                  </label>
+
+                  
+
+                  <select
+                    id="funcao"
+                    name="funcao"
+                    defaultValue={
+                      participanteEmEdicao?.funcao ?? "Participante"
+                    }
+                    className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-lime-400"
+                  >
+                    <option value="Participante">Participante</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Palestrante">Palestrante</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-zinc-400">
+                  Eventos inscritos
+                </p>
+
+                 <style>{`
+                          .caixa-scroll-eventos::-webkit-scrollbar {
+                            display: none;
+                          }
+                        `}</style>
+                
+
+              <div
+              onWheel={(e) => e.stopPropagation()}
+               className="h-[220px] shrink-0 overflow-y-auto overscroll-contain rounded-xl border border-lime-500/20 bg-[#151515]"
+                        style={{
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                      >
+                    <div> 
+    {todosEventos.map((evento) => (
+      <label
+        key={evento.id}
+        className="flex min-h-[52px] cursor-pointer items-center justify-between gap-4 border-b border-zinc-800/60 px-4 py-2.5 last:border-b-0 hover:bg-white/[0.03]"
+      >
+        <span className="flex min-w-0 items-center gap-3">
+          <input
+            type="checkbox"
+            name="eventos"
+            value={evento.id}
+            defaultChecked={
+              participanteEmEdicao?.eventosInscritosIds.includes(
+                evento.id,
+              ) ?? false
+            }
+            className="h-4 w-4 shrink-0 rounded border-zinc-700 bg-zinc-900 accent-lime-400"
+          />
+
+          <span className="truncate text-sm text-zinc-200">
+            {evento.titulo}
+          </span>
+        </span>
+
+        <span className="shrink-0 text-xs text-zinc-500">
+          {evento.data}
+        </span>
+      </label>
+    ))}
+  </div>
+</div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-1">
+                <button
+                  type="button"
+                  onClick={fecharModal}
+                  className="rounded-xl border border-lime-500/20 px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="submit"
+                  className="rounded-xl bg-lime-400 px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
+                >
+                  {participanteEmEdicao ? "Salvar alterações" : "Cadastrar"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {participanteParaExcluir && (
+  <div
+    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-confirmacao-exclusao"
+  >
+    <div className="w-full max-w-sm rounded-2xl border border-lime-400/20 bg-[#111111] p-6 shadow-2xl">
+      
+      <div className="mb-5">
+        <h2
+          id="titulo-confirmacao-exclusao"
+          className="mb-2 text-lg font-black uppercase tracking-wide text-white"
+        >
+          Excluir participante?
+        </h2>
+
+        <p className="text-sm leading-relaxed text-zinc-400">
+          Tem certeza que deseja excluir{" "}
+          <span className="font-semibold text-white">
+            {participanteParaExcluir.nome}
+          </span>
+          ?
+        </p>
+
+        <p className="mt-2 text-xs text-zinc-600">
+          Essa ação removerá o participante da lista.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => setParticipanteParaExcluir(null)}
+          className="rounded-xl border border-lime-500/20 px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          onClick={removerParticipante}
+          className="rounded-xl bg-red-500 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-red-400"
+        >
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+    </div>
   );
 }

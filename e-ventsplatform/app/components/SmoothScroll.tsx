@@ -7,8 +7,13 @@ export default function SmoothScroll({
   children: React.ReactNode;
 }) {
   return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
-      {children}
-    </ReactLenis>
+    <ReactLenis
+  root
+  options={{ lerp: 0.1, duration: 1.5 }}
+>
+  <div className="w-full max-w-full">
+    {children}
+  </div>
+</ReactLenis>
   );
 }
