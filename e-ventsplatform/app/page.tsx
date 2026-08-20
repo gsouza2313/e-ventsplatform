@@ -151,21 +151,43 @@ export default function HomePage() {
           }
         });
       };
+      
+      const setWidth = carousel.scrollWidth / 3;
+
+      const jumpWithoutAnimation = (newScrollLeft: number) => {
+        const prevBehavior = carousel.style.scrollBehavior;
+        carousel.style.scrollBehavior = "auto";
+        carousel.scrollLeft = newScrollLeft;
+        carousel.style.scrollBehavior = prevBehavior;
+      };
+
+      const handleInfiniteLoop = () => {
+        if (carousel.scrollLeft < setWidth * 0.5) {
+          jumpWithoutAnimation(carousel.scrollLeft + setWidth);
+        } else if (carousel.scrollLeft > setWidth * 1.5) {
+          jumpWithoutAnimation(carousel.scrollLeft - setWidth);
+        }
+      };
+
+      const handleCarouselScroll = () => {
+        updateActiveCard();
+        handleInfiniteLoop();
+      };
 
       const centerCarousel = () => {
-        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-        carousel.scrollLeft = maxScroll / 2;
+        jumpWithoutAnimation(setWidth);
         updateActiveCard();
       };
 
-      // Espera 100ms para garantir que o React renderizou os tamanhos reais antes de centralizar
       setTimeout(centerCarousel, 100);
 
-      carousel.addEventListener("scroll", updateActiveCard, { passive: true });
+      carousel.addEventListener("scroll", handleCarouselScroll, {
+        passive: true,
+      });
       window.addEventListener("resize", centerCarousel);
 
       return () => {
-        carousel.removeEventListener("scroll", updateActiveCard);
+        carousel.removeEventListener("scroll", handleCarouselScroll);
         window.removeEventListener("resize", centerCarousel);
       };
     },
@@ -230,21 +252,23 @@ export default function HomePage() {
             ref={carouselRef}
             className="parceiros-scroll flex items-center gap-6 overflow-x-auto snap-x snap-mandatory py-14 px-[35vw] md:px-[42vw] hide-scrollbar scroll-smooth"
           >
-            {parceiros.map((parceiro) => (
-              <div
-                key={parceiro.id}
-                className="parceiro-card snap-center shrink-0 w-44 h-24 rounded-2xl bg-[#111111] border border-gray-800 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-300 transform select-none"
-              >
-                {typeof parceiro.icon === "function" ? (
-                  <parceiro.icon className="w-8 h-8 transition-colors duration-300 icon-glow" />
-                ) : (
-                  <FontAwesomeIcon
-                    icon={parceiro.icon as any}
-                    className="text-2xl transition-colors duration-300 icon-glow"
-                  />
-                )}
-              </div>
-            ))}
+            {[...parceiros, ...parceiros, ...parceiros].map(
+              (parceiro, index) => (
+                <div
+                  key={`${parceiro.id}-${index}`}
+                  className="parceiro-card snap-center shrink-0 w-44 h-24 rounded-2xl bg-[#111111] border border-gray-800 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-300 transform select-none"
+                >
+                  {typeof parceiro.icon === "function" ? (
+                    <parceiro.icon className="w-8 h-8 transition-colors duration-300 icon-glow" />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={parceiro.icon as any}
+                      className="text-2xl transition-colors duration-300 icon-glow"
+                    />
+                  )}
+                </div>
+              )
+            )}
           </div>
         </div>
       </section>
