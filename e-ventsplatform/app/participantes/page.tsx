@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { useState, useEffect } from "react";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { todosEventos } from "../lib/dataEventos";
 import { participantes as participantesIniciais } from "../lib/dataParticipantes";
@@ -40,7 +40,7 @@ export default function ParticipantesPage() {
     setModalAberto(true);
   }
 
-  function salvarParticipante(event: FormEvent<HTMLFormElement>) {
+  function salvarParticipante(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formulario = event.currentTarget;
@@ -78,6 +78,21 @@ export default function ParticipantesPage() {
     formulario.reset();
     fecharModal();
   }
+
+    useEffect(() => {
+      if (modalAberto) {
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+      }
+
+      return () => {
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+      };
+    }, [modalAberto]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] p-8 font-sans text-white md:p-12">
@@ -207,18 +222,21 @@ export default function ParticipantesPage() {
         </div>
       </div>
 
-      {modalAberto && (
+     {modalAberto && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/70 px-4 py-6 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="titulo-modal-participante"
         >
-          <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-lime-400/20 bg-[#111111] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-gray-800/60 px-6 py-5">
+          <div
+                    className="w-full max-w-lg max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl border border-lime-400/20 bg-[#111111] shadow-2xl"
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                  >
+            {/* Cabeçalho sticky: fica fixo no topo enquanto o resto do form rola por baixo dele */}
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-lime-500/20 bg-[#111111] px-6 py-5">
               <h2
                 id="titulo-modal-participante"
-                className="text-xl font-black uppercase"
+                className="text-xl font-black uppercase tracking-wide text-white"
               >
                 {participanteEmEdicao
                   ? "Editar Participante"
@@ -228,7 +246,7 @@ export default function ParticipantesPage() {
               <button
                 type="button"
                 onClick={fecharModal}
-                className="rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-800 hover:text-white"
+                className="rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
                 aria-label="Fechar modal"
               >
                 <X size={22} />
@@ -237,13 +255,13 @@ export default function ParticipantesPage() {
 
             <form
               key={participanteEmEdicao?.id ?? "novo"}
-              className="space-y-5 p-6"
+              className="space-y-4 p-6"
               onSubmit={salvarParticipante}
             >
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
                 >
                   E-mail *
                 </label>
@@ -256,14 +274,14 @@ export default function ParticipantesPage() {
                   defaultValue={participanteEmEdicao?.email ?? ""}
                   placeholder="email@exemplo.com"
                   autoComplete="email"
-                  className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-colors focus:border-lime-400/60"
+                  className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 transition-colors focus:border-lime-400"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="nome"
-                  className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
                 >
                   Nome *
                 </label>
@@ -276,15 +294,15 @@ export default function ParticipantesPage() {
                   defaultValue={participanteEmEdicao?.nome ?? ""}
                   placeholder="Nome completo"
                   autoComplete="name"
-                  className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-colors focus:border-lime-400/60"
+                  className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 transition-colors focus:border-lime-400"
                 />
               </div>
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label
                     htmlFor="status"
-                    className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                    className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
                   >
                     Status de inscrição *
                   </label>
@@ -293,7 +311,7 @@ export default function ParticipantesPage() {
                     id="status"
                     name="status"
                     defaultValue={participanteEmEdicao?.status ?? "Pendente"}
-                    className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-lime-400/60"
+                    className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-lime-400"
                   >
                     <option value="Pendente">Pendente</option>
                     <option value="Confirmada">Confirmada</option>
@@ -303,7 +321,7 @@ export default function ParticipantesPage() {
                 <div>
                   <label
                     htmlFor="funcao"
-                    className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                    className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400"
                   >
                     Função *
                   </label>
@@ -314,7 +332,7 @@ export default function ParticipantesPage() {
                     defaultValue={
                       participanteEmEdicao?.funcao ?? "Participante"
                     }
-                    className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-lime-400/60"
+                    className="w-full rounded-xl border border-lime-500/20 bg-[#151515] px-4 py-2.5 text-sm text-white outline-none transition-colors focus:border-lime-400"
                   >
                     <option value="Participante">Participante</option>
                     <option value="Professor">Professor</option>
@@ -324,54 +342,70 @@ export default function ParticipantesPage() {
               </div>
 
               <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-zinc-400">
                   Eventos inscritos
                 </p>
 
-                <div className="hide-scrollbar max-h-[260px] overflow-y-auto overscroll-contain rounded-xl border border-gray-800">
-                  {todosEventos.map((evento) => (
-                    <label
-                      key={evento.id}
-                      className="flex cursor-pointer items-center justify-between gap-4 border-b border-gray-800 px-4 py-3 last:border-b-0 hover:bg-white/[0.02]"
-                    >
-                      <span className="flex min-w-0 items-center gap-3">
-                        <input
-                          type="checkbox"
-                          name="eventos"
-                          value={evento.id}
-                          defaultChecked={
-                            participanteEmEdicao?.eventosInscritosIds.includes(
-                              evento.id,
-                            ) ?? false
+                 <style>{`
+                          .caixa-scroll-eventos::-webkit-scrollbar {
+                            display: none;
                           }
-                          className="h-4 w-4 shrink-0 accent-lime-400"
-                        />
+                        `}</style>
+                
 
-                        <span className="truncate text-sm text-gray-300">
-                          {evento.titulo}
-                        </span>
-                      </span>
+              <div
+              onWheel={(e) => e.stopPropagation()}
+               className="h-[220px] shrink-0 overflow-y-auto overscroll-contain rounded-xl border border-lime-500/20 bg-[#151515]"
+                        style={{
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                      >
+                    <div> 
+    {todosEventos.map((evento) => (
+      <label
+        key={evento.id}
+        className="flex min-h-[52px] cursor-pointer items-center justify-between gap-4 border-b border-zinc-800/60 px-4 py-2.5 last:border-b-0 hover:bg-white/[0.03]"
+      >
+        <span className="flex min-w-0 items-center gap-3">
+          <input
+            type="checkbox"
+            name="eventos"
+            value={evento.id}
+            defaultChecked={
+              participanteEmEdicao?.eventosInscritosIds.includes(
+                evento.id,
+              ) ?? false
+            }
+            className="h-4 w-4 shrink-0 rounded border-zinc-700 bg-zinc-900 accent-lime-400"
+          />
 
-                      <span className="shrink-0 text-xs text-gray-600">
-                        {evento.data}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+          <span className="truncate text-sm text-zinc-200">
+            {evento.titulo}
+          </span>
+        </span>
+
+        <span className="shrink-0 text-xs text-zinc-500">
+          {evento.data}
+        </span>
+      </label>
+    ))}
+  </div>
+</div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-1">
                 <button
                   type="button"
                   onClick={fecharModal}
-                  className="rounded-xl border border-gray-800 px-4 py-3 text-sm font-semibold text-gray-400 transition-colors hover:border-gray-700 hover:bg-gray-800 hover:text-white"
+                  className="rounded-xl border border-lime-500/20 px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
                 >
                   Cancelar
                 </button>
 
                 <button
                   type="submit"
-                  className="rounded-xl bg-lime-400 px-4 py-3 text-sm font-bold text-black transition-colors hover:bg-lime-300"
+                  className="rounded-xl bg-lime-400 px-4 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
                 >
                   {participanteEmEdicao ? "Salvar alterações" : "Cadastrar"}
                 </button>
