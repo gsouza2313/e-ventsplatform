@@ -246,6 +246,35 @@ export default function ParticipantesPage() {
                   </select>
                 </div>
               </div>
+              <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                      Eventos inscritos
+                    </p>
+
+                    <div className="hide-scrollbar max-h-[260px] overflow-y-auto overscroll-contain rounded-xl border border-gray-800">
+                      {todosEventos.map((evento) => (
+                        <label
+                          key={evento.id}
+                          className="flex cursor-pointer items-center justify-between gap-4 border-b border-gray-800 px-4 py-3 last:border-b-0 hover:bg-white/[0.02]"
+                        >
+                          <span className="flex min-w-0 items-center gap-3">
+                            <input
+                              type="checkbox"
+                              name="eventos"
+                              value={evento.id}
+                              className="h-4 w-4 shrink-0 accent-lime-400"
+                            />
+
+                            <span className="truncate text-sm text-gray-300">
+                              {evento.titulo}
+                            </span>
+                          </span>
+
+                          <span className="shrink-0 text-xs text-gray-600">{evento.data}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
               </form>
     </div>
   </div>
