@@ -170,11 +170,41 @@ export default function ParticipantesPage() {
         </button>
       </div>
 
-      <div className="p-6">
-        <p className="text-sm text-gray-500">
-          Preencha os dados para cadastrar um novo participante.
-        </p>
-      </div>
+                    <form className="space-y-5 p-6">
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    E-mail *
+                  </label>
+
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="email@exemplo.com"
+                    autoComplete="email"
+                    className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-colors focus:border-lime-400/60"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="nome"
+                    className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Nome *
+                  </label>
+
+                  <input
+                    id="nome"
+                    type="text"
+                    placeholder="Nome completo"
+                    autoComplete="name"
+                    className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-colors focus:border-lime-400/60"
+                  />
+                </div>
+              </form>
     </div>
   </div>
 )}
