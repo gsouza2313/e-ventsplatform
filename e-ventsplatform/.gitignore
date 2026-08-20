@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# Next.js build output
+.next/
+chunks/
+
+
 # production
 /build
 
