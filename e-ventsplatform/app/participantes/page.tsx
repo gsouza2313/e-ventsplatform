@@ -22,15 +22,31 @@ export default function ParticipantesPage() {
   const [modalAberto, setModalAberto] = useState(false);
   const [listaParticipantes, setListaParticipantes] =
     useState(participantesIniciais);
+  const [participanteEmEdicao, setParticipanteEmEdicao] =
+    useState<Participante | null>(null);
 
-  function cadastrarParticipante(event: FormEvent<HTMLFormElement>) {
+  function fecharModal() {
+    setModalAberto(false);
+    setParticipanteEmEdicao(null);
+  }
+
+  function abrirNovoParticipante() {
+    setParticipanteEmEdicao(null);
+    setModalAberto(true);
+  }
+
+  function abrirEdicao(participante: Participante) {
+    setParticipanteEmEdicao(participante);
+    setModalAberto(true);
+  }
+
+  function salvarParticipante(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formulario = event.currentTarget;
     const dados = new FormData(formulario);
 
-    const novoParticipante: Participante = {
-      id: Math.max(0, ...listaParticipantes.map((participante) => participante.id)) + 1,
+    const dadosDoParticipante = {
       nome: String(dados.get("nome")).trim(),
       email: String(dados.get("email")).trim(),
       status: String(dados.get("status")),
@@ -38,13 +54,29 @@ export default function ParticipantesPage() {
       eventosInscritosIds: dados.getAll("eventos").map(Number),
     };
 
-    setListaParticipantes((participantesAtuais) => [
-      ...participantesAtuais,
-      novoParticipante,
-    ]);
+    if (participanteEmEdicao) {
+      setListaParticipantes((participantesAtuais) =>
+        participantesAtuais.map((participante) =>
+          participante.id === participanteEmEdicao.id
+            ? { id: participante.id, ...dadosDoParticipante }
+            : participante,
+        ),
+      );
+    } else {
+      const proximoId =
+        Math.max(
+          0,
+          ...listaParticipantes.map((participante) => participante.id),
+        ) + 1;
+
+      setListaParticipantes((participantesAtuais) => [
+        ...participantesAtuais,
+        { id: proximoId, ...dadosDoParticipante },
+      ]);
+    }
 
     formulario.reset();
-    setModalAberto(false);
+    fecharModal();
   }
 
   return (
@@ -63,7 +95,7 @@ export default function ParticipantesPage() {
 
           <button
             type="button"
-            onClick={() => setModalAberto(true)}
+            onClick={abrirNovoParticipante}
             className="flex items-center gap-2 rounded-xl bg-lime-400 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
           >
             <Plus size={16} />
@@ -152,6 +184,7 @@ export default function ParticipantesPage() {
                     <div className="flex items-center justify-end gap-4 text-gray-600">
                       <button
                         type="button"
+                        onClick={() => abrirEdicao(participante)}
                         title={`Editar ${participante.nome}`}
                         className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-lime-400"
                       >
@@ -187,12 +220,14 @@ export default function ParticipantesPage() {
                 id="titulo-modal-participante"
                 className="text-xl font-black uppercase"
               >
-                Novo Participante
+                {participanteEmEdicao
+                  ? "Editar Participante"
+                  : "Novo Participante"}
               </h2>
 
               <button
                 type="button"
-                onClick={() => setModalAberto(false)}
+                onClick={fecharModal}
                 className="rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-800 hover:text-white"
                 aria-label="Fechar modal"
               >
@@ -200,7 +235,11 @@ export default function ParticipantesPage() {
               </button>
             </div>
 
-            <form className="space-y-5 p-6" onSubmit={cadastrarParticipante}>
+            <form
+              key={participanteEmEdicao?.id ?? "novo"}
+              className="space-y-5 p-6"
+              onSubmit={salvarParticipante}
+            >
               <div>
                 <label
                   htmlFor="email"
@@ -214,6 +253,7 @@ export default function ParticipantesPage() {
                   name="email"
                   type="email"
                   required
+                  defaultValue={participanteEmEdicao?.email ?? ""}
                   placeholder="email@exemplo.com"
                   autoComplete="email"
                   className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-colors focus:border-lime-400/60"
@@ -233,6 +273,7 @@ export default function ParticipantesPage() {
                   name="nome"
                   type="text"
                   required
+                  defaultValue={participanteEmEdicao?.nome ?? ""}
                   placeholder="Nome completo"
                   autoComplete="name"
                   className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-colors focus:border-lime-400/60"
@@ -251,7 +292,7 @@ export default function ParticipantesPage() {
                   <select
                     id="status"
                     name="status"
-                    defaultValue="Pendente"
+                    defaultValue={participanteEmEdicao?.status ?? "Pendente"}
                     className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-lime-400/60"
                   >
                     <option value="Pendente">Pendente</option>
@@ -270,7 +311,9 @@ export default function ParticipantesPage() {
                   <select
                     id="funcao"
                     name="funcao"
-                    defaultValue="Participante"
+                    defaultValue={
+                      participanteEmEdicao?.funcao ?? "Participante"
+                    }
                     className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-lime-400/60"
                   >
                     <option value="Participante">Participante</option>
@@ -296,6 +339,11 @@ export default function ParticipantesPage() {
                           type="checkbox"
                           name="eventos"
                           value={evento.id}
+                          defaultChecked={
+                            participanteEmEdicao?.eventosInscritosIds.includes(
+                              evento.id,
+                            ) ?? false
+                          }
                           className="h-4 w-4 shrink-0 accent-lime-400"
                         />
 
@@ -315,7 +363,7 @@ export default function ParticipantesPage() {
               <div className="grid grid-cols-2 gap-4 pt-1">
                 <button
                   type="button"
-                  onClick={() => setModalAberto(false)}
+                  onClick={fecharModal}
                   className="rounded-xl border border-gray-800 px-4 py-3 text-sm font-semibold text-gray-400 transition-colors hover:border-gray-700 hover:bg-gray-800 hover:text-white"
                 >
                   Cancelar
@@ -325,7 +373,7 @@ export default function ParticipantesPage() {
                   type="submit"
                   className="rounded-xl bg-lime-400 px-4 py-3 text-sm font-bold text-black transition-colors hover:bg-lime-300"
                 >
-                  Cadastrar
+                  {participanteEmEdicao ? "Salvar alterações" : "Cadastrar"}
                 </button>
               </div>
             </form>
