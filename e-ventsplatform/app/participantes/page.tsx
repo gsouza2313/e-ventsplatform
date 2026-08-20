@@ -194,6 +194,7 @@ export default function ParticipantesPage() {
                     className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
                   >
                     Nome *
+                    
                   </label>
 
                   <input
@@ -202,8 +203,49 @@ export default function ParticipantesPage() {
                     placeholder="Nome completo"
                     autoComplete="name"
                     className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-colors focus:border-lime-400/60"
+                    
+                  
+                  
                   />
                 </div>
+                <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="status"
+                    className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Status de inscrição *
+                  </label>
+
+                  <select
+                    id="status"
+                    defaultValue="Pendente"
+                    className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-lime-400/60"
+                  >
+                    <option value="Pendente">Pendente</option>
+                    <option value="Confirmada">Confirmada</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="funcao"
+                    className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  >
+                    Função *
+                  </label>
+
+                  <select
+                    id="funcao"
+                    defaultValue="Participante"
+                    className="w-full rounded-xl border border-gray-800 bg-[#181818] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-lime-400/60"
+                  >
+                    <option value="Participante">Participante</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Palestrante">Palestrante</option>
+                  </select>
+                </div>
+              </div>
               </form>
     </div>
   </div>
