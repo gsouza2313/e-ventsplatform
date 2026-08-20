@@ -7,6 +7,20 @@
   --foreground: #171717;
 }
 
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 transparent;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge legado */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge novo */
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
