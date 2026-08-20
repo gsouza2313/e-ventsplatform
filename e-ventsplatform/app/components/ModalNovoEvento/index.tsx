@@ -1,5 +1,3 @@
-import { todosEventos } from "@/app/lib/dataEventos";
-import { obterVagasDisponiveis } from "@/app/utils/eventosFilter";
 import {
   Dialog,
   DialogContent,
@@ -22,16 +20,36 @@ export interface NovoEventoData {
   nomeProfessor?: string;
 }
 
+export interface EventoParaEditar {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  imagem?: string;
+  data: string;
+  hora: string;
+  local?: string;
+  vagasTotais: number;
+  vagasDisponiveis: number;
+  nomeProfessor?: string;
+}
+
 interface ModalNovoEventoProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onCriar: (dados: NovoEventoData) => void;
+  onEditar: (dados: NovoEventoData) => void;
   proximoId: number;
+  eventoEditando?: EventoParaEditar | null;
 }
 
 function formatarDataParaBR(dataISO: string): string {
   const [ano, mes, dia] = dataISO.split("-");
   return `${dia}/${mes}/${ano}`;
+}
+
+function formatarDataParaISO(dataBR: string): string {
+  const [dia, mes, ano] = dataBR.split("/");
+  return `${ano}-${mes}-${dia}`;
 }
 
 const CAMPOS_INICIAIS = {
@@ -49,11 +67,14 @@ export function ModalNovoEvento({
   isOpen,
   onOpenChange,
   onCriar,
+  onEditar,
   proximoId,
+  eventoEditando,
 }: ModalNovoEventoProps) {
   const lenis = useLenis();
   const [campos, setCampos] = useState(CAMPOS_INICIAIS);
   const [tempId, setTempId] = useState<number>(0);
+  const modoEdicao = Boolean(eventoEditando);
 
   // Fix do scroll no fundo
   useEffect(() => {
@@ -70,13 +91,30 @@ export function ModalNovoEvento({
     };
   }, [isOpen, lenis]);
 
-  // Reset do modal
+  // Reset / preenchimento do modal
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      if (eventoEditando) {
+        setTempId(eventoEditando.id);
+        setCampos({
+          titulo: eventoEditando.titulo,
+          imagem: eventoEditando.imagem || "",
+          descricao: eventoEditando.descricao || "",
+          data: formatarDataParaISO(eventoEditando.data),
+          hora: eventoEditando.hora,
+          local: eventoEditando.local || "",
+          vagasTotais: String(eventoEditando.vagasTotais),
+          nomeProfessor: eventoEditando.nomeProfessor || "",
+        });
+      } else {
+        setTempId(proximoId);
+        setCampos(CAMPOS_INICIAIS);
+      }
+    } else {
       setTempId(proximoId);
       setCampos(CAMPOS_INICIAIS);
     }
-  }, [isOpen]);
+  }, [isOpen, eventoEditando, proximoId]);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -88,7 +126,7 @@ export function ModalNovoEvento({
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    onCriar({
+    const dados: NovoEventoData = {
       id: tempId,
       titulo: campos.titulo,
       descricao: campos.descricao,
@@ -98,11 +136,22 @@ export function ModalNovoEvento({
       local: campos.local || undefined,
       vagasTotais: Number(campos.vagasTotais),
       nomeProfessor: campos.nomeProfessor || undefined,
-    });
+    };
+
+    if (modoEdicao) {
+      onEditar(dados);
+    } else {
+      onCriar(dados);
+    }
   }
 
-  const vagasDisponiveis =
-    obterVagasDisponiveis(tempId) || campos.vagasTotais || "-";
+  const vagasOcupadas = eventoEditando
+    ? eventoEditando.vagasTotais - eventoEditando.vagasDisponiveis
+    : 0;
+
+  const vagasDisponiveis = campos.vagasTotais
+    ? Math.max(Number(campos.vagasTotais) - vagasOcupadas)
+    : "-";
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -114,7 +163,7 @@ export function ModalNovoEvento({
           {/* CABEÇALHO */}
           <DialogHeader className="flex flex-col px-0 py-4 border-b border-gray-800/80">
             <DialogTitle className="text-lg font-anton uppercase tracking-wider text-white">
-              Novo Evento
+              {modoEdicao ? "Editar Evento" : "Novo Evento"}
             </DialogTitle>
           </DialogHeader>
 
@@ -134,6 +183,7 @@ export function ModalNovoEvento({
                 className="w-full bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-lime-400 transition-colors"
               />
             </div>
+
             {/* URL DA IMAGEM */}
             <div>
               <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
@@ -241,9 +291,9 @@ export function ModalNovoEvento({
                 </label>
                 <input
                   type="text"
-                  value={campos.vagasTotais ? vagasDisponiveis : "-"}
+                  value={vagasDisponiveis}
                   disabled
-                  className="w-full bg-[#1a1a1a]/50 border border-gray-800/50 rounded-xl px-4 py-3 text-sm text-lime-400 font-bold focus:outline-none cursor-not-allowed"
+                  className="w-full bg-[#111111]/50 border border-gray-800/50 rounded-xl px-4 py-3 text-sm text-lime-400 font-bold focus:outline-none cursor-not-allowed"
                 />
               </div>
             </div>
@@ -279,7 +329,7 @@ export function ModalNovoEvento({
                 type="submit"
                 className="flex-1 py-3 px-4 rounded-xl bg-lime-400 text-black hover:bg-lime-300 transition-colors font-bold text-sm"
               >
-                Criar Evento
+                {modoEdicao ? "Salvar Alterações" : "Criar Evento"}
               </button>
             </div>
           </form>
