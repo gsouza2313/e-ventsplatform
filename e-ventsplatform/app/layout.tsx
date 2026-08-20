@@ -4,6 +4,7 @@ import Link from "next/link";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import { cn } from "@/lib/utils";
+import { Footer } from "./components/Footer";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -54,6 +55,7 @@ export default function RootLayout({
           </header>
           {children}
         </SmoothScroll>
+        <Footer />
       </body>
     </html>
   );
