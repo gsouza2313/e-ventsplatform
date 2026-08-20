@@ -118,10 +118,11 @@ function removerParticipante() {
       };
     }, [modalAberto]);
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0a] p-8 font-sans text-white md:p-12">
-      <div className="mx-auto max-w-7xl">
-        <header className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+ return (
+  
+ <div className="min-h-screen w-full bg-[#0a0a0a] p-4 sm:p-6 md:p-12">
+   <div className="mx-auto w-full max-w-7xl">
+        <header className="mb-8 flex flex-col items-stretch justify-between gap-4 sm:mb-10 md:flex-row md:items-center">
           <div>
             <h1 className="mb-1 text-2xl font-black uppercase tracking-tight md:text-3xl">
               Gestão de Participantes
@@ -135,15 +136,100 @@ function removerParticipante() {
           <button
             type="button"
             onClick={abrirNovoParticipante}
-            className="flex items-center gap-2 rounded-xl bg-lime-400 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-lime-400 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300 md:w-auto"
           >
             <Plus size={16} />
             Novo Participante
           </button>
         </header>
 
-        <div className="overflow-x-auto rounded-2xl border border-gray-800/60 bg-[#111111]">
-          <table className="w-full min-w-[900px] border-collapse text-left">
+        <div className="space-y-3 md:hidden">
+  {listaParticipantes.map((participante) => (
+    <div
+      key={participante.id}
+      className="rounded-2xl border border-gray-800/60 bg-[#111111] p-4"
+    >
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate font-bold text-white">
+            {participante.nome}
+          </p>
+
+          <p className="mt-1 truncate text-sm text-gray-400">
+            {participante.email}
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1 text-gray-600">
+          <button
+            type="button"
+            onClick={() => abrirEdicao(participante)}
+            title={`Editar ${participante.nome}`}
+            className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-lime-400"
+          >
+            <Pencil size={16} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => abrirConfirmacaoExclusao(participante)}
+            title={`Excluir ${participante.nome}`}
+            className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <span
+          className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
+            estilosStatus[participante.status]
+          }`}
+        >
+          {participante.status}
+        </span>
+
+        <span
+          className={`inline-flex rounded-full border px-3 py-1 text-xs ${
+            estilosFuncao[participante.funcao]
+          }`}
+        >
+          {participante.funcao}
+        </span>
+      </div>
+
+      <div className="mt-3 border-t border-gray-800/60 pt-3">
+        <p className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-600">
+          Eventos
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          {participante.eventosInscritosIds.map((eventoId) => {
+            const evento = todosEventos.find(
+              (item) => item.id === eventoId
+            );
+
+            if (!evento) return null;
+
+            return (
+              <span
+                key={evento.id}
+                title={evento.titulo}
+                className="truncate rounded-md border border-gray-800/80 bg-white/[0.03] px-2.5 py-1 text-xs text-gray-500"
+              >
+                {evento.titulo}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+       <div className="w-full overflow-x-auto rounded-2xl border border-gray-800/60 bg-[#111111]">
+  <table className="w-full min-w-[700px] border-collapse text-left">
             <thead>
               <tr className="border-b border-gray-800/60 text-xs font-extrabold uppercase tracking-wider text-gray-600">
                 <th className="px-6 py-4 font-medium">Nome</th>
@@ -158,91 +244,114 @@ function removerParticipante() {
             </thead>
 
             <tbody className="text-sm text-gray-300">
-              {listaParticipantes.map((participante, index) => (
-                <tr
-                  key={participante.id}
-                  className={`border-b border-gray-800/40 transition-colors hover:bg-white/[0.02] ${
-                    index === listaParticipantes.length - 1
-                      ? "border-b-0"
-                      : ""
-                  }`}
+  {listaParticipantes.length > 0 ? (
+    listaParticipantes.map((participante, index) => (
+      <tr
+        key={participante.id}
+        className={`border-b border-gray-800/40 transition-colors hover:bg-white/[0.02] ${
+          index === listaParticipantes.length - 1 ? "border-b-0" : ""
+        }`}
+      >
+        <td className="px-6 py-4">
+          <p className="max-w-[190px] truncate font-bold text-white">
+            {participante.nome}
+          </p>
+        </td>
+
+        <td className="px-6 py-4 text-gray-400">
+          {participante.email}
+        </td>
+
+        <td className="px-6 py-4">
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
+              estilosStatus[participante.status]
+            }`}
+          >
+            {participante.status}
+          </span>
+        </td>
+
+        <td className="px-6 py-4">
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs ${
+              estilosFuncao[participante.funcao]
+            }`}
+          >
+            {participante.funcao}
+          </span>
+        </td>
+
+        <td className="px-6 py-4">
+          <div className="flex max-w-[270px] gap-2 overflow-hidden">
+            {participante.eventosInscritosIds.map((eventoId) => {
+              const evento = todosEventos.find(
+                (item) => item.id === eventoId
+              );
+
+              if (!evento) return null;
+
+              return (
+                <span
+                  key={evento.id}
+                  title={evento.titulo}
+                  className="shrink-0 truncate rounded-md border border-gray-800/80 bg-white/[0.03] px-2.5 py-1 text-xs text-gray-500"
                 >
-                  <td className="px-6 py-4">
-                    <p className="max-w-[190px] truncate font-bold text-white">
-                      {participante.nome}
-                    </p>
-                  </td>
+                  {evento.titulo}
+                </span>
+              );
+            })}
+          </div>
+        </td>
 
-                  <td className="px-6 py-4 text-gray-400">
-                    {participante.email}
-                  </td>
+        <td className="px-6 py-4 text-right">
+          <div className="flex items-center justify-end gap-4 text-gray-600">
+            <button
+              type="button"
+              onClick={() => abrirEdicao(participante)}
+              title={`Editar ${participante.nome}`}
+              className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-lime-400"
+            >
+              <Pencil size={16} />
+            </button>
 
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
-                        estilosStatus[participante.status]
-                      }`}
-                    >
-                      {participante.status}
-                    </span>
-                  </td>
+            <button
+              type="button"
+              onClick={() => abrirConfirmacaoExclusao(participante)}
+              title={`Excluir ${participante.nome}`}
+              className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={6} className="px-6 py-16 text-center">
+        <div className="flex flex-col items-center justify-center">
+          <p className="text-lg font-bold text-white">
+            Nenhum participante cadastrado
+          </p>
 
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex rounded-full border px-3 py-1 text-xs ${
-                        estilosFuncao[participante.funcao]
-                      }`}
-                    >
-                      {participante.funcao}
-                    </span>
-                  </td>
+          <p className="mt-2 text-sm text-gray-500">
+            Cadastre um novo participante para começar.
+          </p>
 
-                  <td className="px-6 py-4">
-                    <div className="flex max-w-[270px] gap-2 overflow-hidden">
-                      {participante.eventosInscritosIds.map((eventoId) => {
-                        const evento = todosEventos.find(
-                          (item) => item.id === eventoId,
-                        );
-
-                        if (!evento) return null;
-
-                        return (
-                          <span
-                            key={evento.id}
-                            title={evento.titulo}
-                            className="shrink-0 truncate rounded-md border border-gray-800/80 bg-white/[0.03] px-2.5 py-1 text-xs text-gray-500"
-                          >
-                            {evento.titulo}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </td>
-
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-4 text-gray-600">
-                      <button
-                        type="button"
-                        onClick={() => abrirEdicao(participante)}
-                        title={`Editar ${participante.nome}`}
-                        className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-lime-400"
-                      >
-                        <Pencil size={16} />
-                      </button>
-
-                      <button
-                            type="button"
-                           onClick={() => abrirConfirmacaoExclusao(participante)}
-                            title={`Excluir ${participante.nome}`}
-                            className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+          <button
+            type="button"
+            onClick={abrirNovoParticipante}
+            className="mt-5 rounded-xl bg-lime-400 px-5 py-2.5 text-sm font-bold text-black transition-colors hover:bg-lime-300"
+          >
+            <Plus size={16} className="mr-2 inline" />
+            Novo Participante
+          </button>
+        </div>
+      </td>
+    </tr>
+  )}
+</tbody>
           </table>
         </div>
       </div>
@@ -258,7 +367,7 @@ function removerParticipante() {
                     style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                   >
            
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-lime-500/20 bg-[#111111] px-6 py-5">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-lime-500/20 bg-[#111111] px-4 py-4 sm:px-6 sm:py-5">
               <h2
                 id="titulo-modal-participante"
                 className="text-xl font-black uppercase tracking-wide text-white"
@@ -280,7 +389,7 @@ function removerParticipante() {
 
             <form
               key={participanteEmEdicao?.id ?? "novo"}
-              className="space-y-4 p-6"
+              className="space-y-4 p-4 sm:p-6"
               onSubmit={salvarParticipante}
             >
               <div>

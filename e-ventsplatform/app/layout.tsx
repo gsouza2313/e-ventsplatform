@@ -1,14 +1,21 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Anton } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+
+
 
 const anton = Anton({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-anton",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "EVENT HUB",
@@ -21,8 +28,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={anton.variable}>
-      <body className="bg-black text-white min-h-screen overflow-x-hidden">
+    <html
+  lang="pt-BR"
+  className={anton.variable}
+  style={{ width: "100vw", minHeight: "100vh" }}
+>
+  <body
+    style={{
+      width: "100vw",
+      minHeight: "100vh",
+      margin: 0,
+    }}
+    className="bg-black text-white"
+  >
         <SmoothScroll>
           <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800 bg-black/80 backdrop-blur sticky top-0 z-50">
             <div className="text-xl font-extrabold text-lime-400">
@@ -49,7 +67,10 @@ export default function RootLayout({
               </Link>
             </nav>
           </header>
-          {children}
+          
+         <main className="w-full min-w-0">
+              {children}
+            </main>
         </SmoothScroll>
       </body>
     </html>
