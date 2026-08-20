@@ -25,6 +25,9 @@ export default function ParticipantesPage() {
   const [participanteEmEdicao, setParticipanteEmEdicao] =
     useState<Participante | null>(null);
 
+    const [participanteParaExcluir, setParticipanteParaExcluir] =
+  useState<Participante | null>(null);
+
   function fecharModal() {
     setModalAberto(false);
     setParticipanteEmEdicao(null);
@@ -39,6 +42,27 @@ export default function ParticipantesPage() {
     setParticipanteEmEdicao(participante);
     setModalAberto(true);
   }
+
+ 
+
+function abrirConfirmacaoExclusao(participante: Participante) {
+  setParticipanteParaExcluir(participante);
+}
+
+function removerParticipante() {
+  if (!participanteParaExcluir) return;
+
+  setListaParticipantes((participantesAtuais) =>
+    participantesAtuais.filter(
+      (participante) =>
+        participante.id !== participanteParaExcluir.id,
+    ),
+  );
+
+  setParticipanteParaExcluir(null);
+}
+
+
 
   function salvarParticipante(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -207,12 +231,13 @@ export default function ParticipantesPage() {
                       </button>
 
                       <button
-                        type="button"
-                        title={`Excluir ${participante.nome}`}
-                        className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                            type="button"
+                           onClick={() => abrirConfirmacaoExclusao(participante)}
+                            title={`Excluir ${participante.nome}`}
+                            className="rounded-md p-1.5 transition-colors hover:bg-gray-800 hover:text-red-500"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                     </div>
                   </td>
                 </tr>
@@ -232,7 +257,7 @@ export default function ParticipantesPage() {
                     className="w-full max-w-lg max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl border border-lime-400/20 bg-[#111111] shadow-2xl"
                     style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                   >
-            {/* Cabeçalho sticky: fica fixo no topo enquanto o resto do form rola por baixo dele */}
+           
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-lime-500/20 bg-[#111111] px-6 py-5">
               <h2
                 id="titulo-modal-participante"
@@ -326,6 +351,8 @@ export default function ParticipantesPage() {
                     Função *
                   </label>
 
+                  
+
                   <select
                     id="funcao"
                     name="funcao"
@@ -414,6 +441,56 @@ export default function ParticipantesPage() {
           </div>
         </div>
       )}
+      {participanteParaExcluir && (
+  <div
+    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-confirmacao-exclusao"
+  >
+    <div className="w-full max-w-sm rounded-2xl border border-lime-400/20 bg-[#111111] p-6 shadow-2xl">
+      
+      <div className="mb-5">
+        <h2
+          id="titulo-confirmacao-exclusao"
+          className="mb-2 text-lg font-black uppercase tracking-wide text-white"
+        >
+          Excluir participante?
+        </h2>
+
+        <p className="text-sm leading-relaxed text-zinc-400">
+          Tem certeza que deseja excluir{" "}
+          <span className="font-semibold text-white">
+            {participanteParaExcluir.nome}
+          </span>
+          ?
+        </p>
+
+        <p className="mt-2 text-xs text-zinc-600">
+          Essa ação removerá o participante da lista.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => setParticipanteParaExcluir(null)}
+          className="rounded-xl border border-lime-500/20 px-4 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          onClick={removerParticipante}
+          className="rounded-xl bg-red-500 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-red-400"
+        >
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
