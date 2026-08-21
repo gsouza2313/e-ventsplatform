@@ -48,7 +48,7 @@ export default async function RootLayout({
         >
           <Header userId={userId} />
           <SmoothScroll>
-            <main className="w-full min-w-0">{children}</main>
+            <main className="w-full min-w-0 flex-1 flex  flex-col">{children}</main>
           </SmoothScroll>
           <Footer />
         </body>

@@ -27,12 +27,12 @@ export function Header({ userId }: { userId: string | null }) {
   return (
     <header className="sticky top-0 z-50 flex justify-between items-center px-6 md:px-8 py-4 border-b border-lime-950 bg-zinc-950">
       {/* LOGO */}
-      <div className="text-xl font-anton font-extrabold text-lime-400 z-50">
+      <Link href="/" className="text-xl font-anton font-extrabold text-lime-400 z-50">
         <div className="text-2xl font-black uppercase tracking-wider font-anton">
           <span className="text-lime-400">Event</span>{" "}
           <span className="text-white">Hub</span>
         </div>
-      </div>
+      </Link>
 
       {/* ÍCONE HAMBÚRGUER */}
       <button

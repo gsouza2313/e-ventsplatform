@@ -124,7 +124,7 @@ function removerParticipante() {
    <div className="mx-auto w-full max-w-7xl">
         <header className="mb-8 flex flex-col items-stretch justify-between gap-4 sm:mb-10 md:flex-row md:items-center">
           <div>
-            <h1 className="mb-1 text-2xl font-black uppercase tracking-tight md:text-3xl">
+            <h1 className="mb-1 text-2xl font-black text-white uppercase tracking-tight md:text-3xl">
               Gestão de Participantes
             </h1>
 
