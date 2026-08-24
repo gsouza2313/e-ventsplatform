@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "EVENT HUB",
+  title: "E-vents",
   description: "Plataforma de Eventos",
 };
 

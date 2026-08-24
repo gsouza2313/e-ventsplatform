@@ -29,8 +29,7 @@ export function Header({ userId }: { userId: string | null }) {
       {/* LOGO */}
       <Link href="/" className="text-xl font-anton font-extrabold text-lime-400 z-50">
         <div className="text-2xl font-black uppercase tracking-wider font-anton">
-          <span className="text-lime-400">Event</span>{" "}
-          <span className="text-white">Hub</span>
+          <span className="text-lime-400">E-vents</span>{" "}
         </div>
       </Link>
 
