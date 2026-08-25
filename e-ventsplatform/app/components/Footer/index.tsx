@@ -10,8 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
           <div className="md:col-span-4">
             <div className="text-2xl font-black uppercase tracking-wider font-anton">
-              <span className="text-lime-400">Event</span>{" "}
-              <span className="text-white">Hub</span>
+              <span className="text-lime-400">E-vents</span>{" "}
             </div>
             <p className="mt-4 text-sm text-gray-600 max-w-sm leading-relaxed">
               Plataforma de gestão de cursos e workshops para profissionais e
@@ -60,7 +59,7 @@ export function Footer() {
             <ul className="space-y-1 text-sm text-gray-600">
               <li>Equipe de Desenvolvimento</li>
               <li>
-                <span className="text-gray-700">contato@eventhub.dev</span>
+                <span className="text-gray-700">contato@e-vents.dev</span>
               </li>
             </ul>
           </div>
@@ -69,7 +68,7 @@ export function Footer() {
         {/* COPYRIGHT */}
         <div className="mt-16 pt-8 border-t border-gray-800/60 flex items-center justify-center">
           <p className="text-xs text-gray-700">
-            &copy; {anoAtual} EventHub. Todos os direitos reservados.
+            &copy; {anoAtual} E-vents. Todos os direitos reservados.
           </p>
         </div>
       </div>
